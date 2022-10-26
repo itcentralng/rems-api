@@ -11,6 +11,11 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 CORS(app)
 
+# Flask-Upload
+from flask_uploads import UploadSet, IMAGES, configure_uploads
+photos = UploadSet('photos', IMAGES)
+configure_uploads(app, photos)
+
 
 # Celery
 from app.celery import make_celery
@@ -27,6 +32,8 @@ from app.user.controller import bp as user_bp
 app.register_blueprint(user_bp)
 from app.agent.controller import bp as agent_bp
 app.register_blueprint(agent_bp)
+from app.upload.controller import bp as upload_bp
+app.register_blueprint(upload_bp)
 
 # Error handlers
 from .error_handlers import *

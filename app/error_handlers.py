@@ -1,6 +1,7 @@
 from flask import jsonify
 from marshmallow import ValidationError
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError, OperationalError, DatabaseError, DataError
+from flask_uploads import UploadNotAllowed
 from app import app, db
 
 
@@ -60,6 +61,14 @@ def handle_database_error(error):
 @app.errorhandler(DataError)
 def handle_data_error(error):
     db.session.rollback()
+    response = {
+        'status': 'error',
+        'message': str(error)
+    }
+    return response, 400
+
+@app.errorhandler(UploadNotAllowed)
+def handle_upload_not_allowed_error(error):
     response = {
         'status': 'error',
         'message': str(error)
