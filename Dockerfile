@@ -15,9 +15,10 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-# TODO: Add all your environment variables here
-# ARG DATABASE_URI
-# ENV DATABASE_URI=${DATABASE_URI}
+ARG DATABASE_URI
+ENV DATABASE_URI=${DATABASE_URI}
+ARG UPLOADED_PHOTOS_DEST
+ENV UPLOADED_PHOTOS_DEST=${UPLOADED_PHOTOS_DEST}
 
 RUN flask db upgrade
 
