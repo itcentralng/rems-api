@@ -13,3 +13,6 @@ FLASK SETUP LOG
 2022-11-02 15:47:07: Blueprint property added successfully
 2022-11-02 15:50:22: Blueprint unit added successfully
 2022-11-02 15:55:06: Blueprint tenant added successfully
+2022-11-02 17:01:50: Blueprint transaction added successfully
+2022-11-02 17:02:15: Blueprint transaction removed successfully
+2022-11-02 17:02:36: Blueprint transaction added successfully

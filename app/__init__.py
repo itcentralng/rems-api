@@ -40,6 +40,8 @@ from app.unit.controller import bp as unit_bp
 app.register_blueprint(unit_bp)
 from app.tenant.controller import bp as tenant_bp
 app.register_blueprint(tenant_bp)
+from app.transaction.controller import bp as transaction_bp
+app.register_blueprint(transaction_bp)
 
 # Error handlers
 from .error_handlers import *
