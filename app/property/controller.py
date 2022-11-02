@@ -25,7 +25,7 @@ def get_property(id):
         return {'message': 'Property not found'}, 404
     return PropertySchema().dump(property), 200
 
-@bp.patch('/property/<int:id>')
+@bp.put('/property/<int:id>')
 @auth_required()
 def update_property(id):
     property = Property.get_by_id(id)

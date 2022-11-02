@@ -1,5 +1,5 @@
 from app import db
-
+from app.tenant.model import Tenant
 class Unit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
@@ -7,6 +7,7 @@ class Unit(db.Model):
     status = db.Column(db.String(255))
     property_id = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
     tenant_id = db.Column(db.Integer, db.ForeignKey('tenant.id'))
+    tenant = db.relationship('Tenant', backref=db.backref('units', lazy=True))
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now())
     is_deleted = db.Column(db.Boolean, default=False)

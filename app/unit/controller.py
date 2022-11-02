@@ -25,7 +25,7 @@ def get_unit(id):
         return {'message': 'Unit not found'}, 404
     return UnitSchema().dump(unit), 200
 
-@bp.patch('/unit/<int:id>')
+@bp.put('/unit/<int:id>')
 @auth_required()
 def update_unit(id):
     unit = Unit.get_by_id(id)

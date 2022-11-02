@@ -5,3 +5,4 @@ class UnitSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Unit
         exclude = ('is_deleted',)
+    tenant = ma.Nested('TenantSchema')

@@ -22,7 +22,7 @@ def get_tenant(id):
         return {'message': 'Tenant not found'}, 404
     return TenantSchema().dump(tenant), 200
 
-@bp.patch('/tenant/<int:id>')
+@bp.put('/tenant/<int:id>')
 @auth_required()
 def update_tenant(id):
     tenant = Tenant.get_by_id(id)

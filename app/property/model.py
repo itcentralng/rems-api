@@ -91,7 +91,7 @@ class Propertyimage(db.Model):
         return cls.query.filter_by(is_deleted=False).all()
     
     @classmethod
-    def create(cls, property_id, image):
-        propertyimage = cls(property_id=property_id, image=image)
+    def create(cls, image, property_id):
+        propertyimage = cls(image=image, property_id=property_id)
         propertyimage.save()
         return propertyimage
