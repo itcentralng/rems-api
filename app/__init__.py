@@ -34,6 +34,12 @@ from app.agent.controller import bp as agent_bp
 app.register_blueprint(agent_bp)
 from app.upload.controller import bp as upload_bp
 app.register_blueprint(upload_bp)
+from app.property.controller import bp as property_bp
+app.register_blueprint(property_bp)
+from app.unit.controller import bp as unit_bp
+app.register_blueprint(unit_bp)
+from app.tenant.controller import bp as tenant_bp
+app.register_blueprint(tenant_bp)
 
 # Error handlers
 from .error_handlers import *
