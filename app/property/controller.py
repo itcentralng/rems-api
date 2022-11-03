@@ -54,5 +54,9 @@ def delete_property(id):
 @bp.get('/properties')
 @auth_required()
 def get_propertys():
-    propertys = Property.get_all()
-    return PropertySchema(many=True).dump(propertys), 200
+    type = request.args.get('type')
+    if type:
+        properties = Property.get_listing()
+    else:
+        properties = Property.get_all()
+    return PropertySchema(many=True).dump(properties), 200

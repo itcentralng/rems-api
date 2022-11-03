@@ -75,6 +75,10 @@ class Property(db.Model):
         return cls.query.filter_by(is_deleted=False).all()
     
     @classmethod
+    def get_listing(cls):
+        return cls.query.filter_by(is_listed=True, is_deleted=False).all()
+    
+    @classmethod
     def create(cls, name, address, state, lga, images=[], agent_id=None):
         property = cls(name=name, address=address, state=state, lga=lga)
         property.save()
