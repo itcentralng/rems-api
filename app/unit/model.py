@@ -1,5 +1,12 @@
+from datetime import datetime
 from app import db
 from app.tenant.model import Tenant
+
+tenancy_cycle = db.Table('tenancy_cycle',
+    db.Column('unit_id', db.Integer, db.ForeignKey('unit.id'), primary_key=True),
+    db.Column('tenant_id', db.Integer, db.ForeignKey('tenant.id'), primary_key=True),
+    db.Column('cycle', db.String)
+)
 class Unit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
@@ -28,6 +35,16 @@ class Unit(db.Model):
     def delete(self):
         self.is_deleted = True
         self.updated_at = db.func.now()
+        db.session.commit()
+    
+    def add_tenancy_cycle(self, date):
+        # tm_yday from date string
+        cycle = datetime.strptime(date, '%Y-%m-%d').timetuple().tm_yday
+        existing_cycle = db.session.execute(tenancy_cycle.select().where(tenancy_cycle.c.unit_id == self.id).where(tenancy_cycle.c.tenant_id == self.tenant_id)).fetchone()
+        if existing_cycle:
+            db.session.execute(tenancy_cycle.update().where(tenancy_cycle.c.unit_id == self.id).where(tenancy_cycle.c.tenant_id == self.tenant_id).values(cycle=cycle))
+        else:
+            db.session.execute(tenancy_cycle.insert().values(unit_id=self.id, tenant_id=self.tenant_id, cycle=cycle))
         db.session.commit()
 
     @classmethod

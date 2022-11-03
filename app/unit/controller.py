@@ -53,3 +53,13 @@ def delete_unit(id):
 def get_units():
     units = Unit.get_all()
     return UnitSchema(many=True).dump(units), 200
+
+@bp.patch('/unit/<int:id>')
+@auth_required()
+def add_tenancy_cycle(id):
+    unit = Unit.get_by_id(id)
+    if unit is None:
+        return {'message': 'Unit not found'}, 404
+    date = request.json.get('date')
+    unit.add_tenancy_cycle(date)
+    return UnitSchema().dump(unit), 200
