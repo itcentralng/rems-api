@@ -13,7 +13,7 @@ def create_property():
     address = request.json.get('address')
     state = request.json.get('state')
     lga = request.json.get('lga')
-    images = request.json.get('images')
+    images = request.json.get('images', [])
     agent_id = request.json.get('agent_id')
     property = Property.create(name, address, state, lga, images, agent_id)
     return PropertySchema().dump(property), 201
@@ -34,7 +34,7 @@ def update_property(id):
     address = request.json.get('address')
     state = request.json.get('state')
     lga = request.json.get('lga')
-    images = request.json.get('images')
+    images = request.json.get('images', [])
     agent_id = request.json.get('agent_id')
     is_listed = request.json.get('is_listed', False)
     if property is None:
