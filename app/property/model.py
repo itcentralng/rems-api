@@ -86,7 +86,7 @@ class Property(db.Model):
 class Propertyimage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     property_id = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
-    image = db.Column(db.String(255), nullable=False)
+    image = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now())
 
