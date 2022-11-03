@@ -49,3 +49,17 @@ def delete_transaction(id):
 def get_transactions():
     transactions = Transaction.get_all()
     return TransactionSchema(many=True).dump(transactions), 200
+
+@bp.get('/transaction/report')
+@auth_required()
+def get_transaction_report():
+    get_total_tenancy_fee_not_paid = Transaction.get_total_tenancy_fee_not_paid()
+    get_total_tenancy_due = Transaction.get_total_tenancy_due()
+    get_total_tenancy_fee_paid = Transaction.get_total_tenancy_fee_paid()
+    get_total_tenancy_fee_paid_for_current_period = Transaction.get_total_tenancy_fee_paid_for_current_period()
+    return {
+        'notpaid': get_total_tenancy_fee_not_paid,
+        'due': get_total_tenancy_due,
+        'paid': get_total_tenancy_fee_paid,
+        'paidforcurrentperiod': get_total_tenancy_fee_paid_for_current_period
+    }, 200
