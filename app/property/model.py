@@ -9,6 +9,8 @@ class Property(db.Model):
     lga = db.Column(db.String(255), nullable=False)
     images = db.relationship('Propertyimage', backref='property', lazy=True)
     units = db.relationship('Unit', backref='property', lazy=True)
+    agent_id = db.Column(db.Integer, db.ForeignKey('agent.id'))
+    agent = db.relationship('Agent', backref='property', lazy=True)
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now())
     is_deleted = db.Column(db.Boolean, default=False)
@@ -17,7 +19,7 @@ class Property(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, name=None, address=None, state=None, lga=None, images=[]):
+    def update(self, name=None, address=None, state=None, lga=None, images=[], agent_id=None):
         self.name = name or self.name
         self.address = address or self.address
         self.state = state or self.state
@@ -25,6 +27,7 @@ class Property(db.Model):
         for image in images:
             self.add_image(image)
         self.updated_at = db.func.now()
+        self.add_agent(agent_id)
         db.session.commit()
     
     def delete(self):
@@ -45,6 +48,10 @@ class Property(db.Model):
     def add_unit(self, unit):
         self.units.append(unit)
         db.session.commit()
+    
+    def add_agent(self, agent_id):
+        self.agent_id = agent_id
+        db.session.commit()
 
     @classmethod
     def get_by_id(cls, id):
@@ -55,11 +62,12 @@ class Property(db.Model):
         return cls.query.filter_by(is_deleted=False).all()
     
     @classmethod
-    def create(cls, name, address, state, lga, images=[]):
+    def create(cls, name, address, state, lga, images=[], agent_id=None):
         property = cls(name=name, address=address, state=state, lga=lga)
         property.save()
         for image in images:
             property.add_image(image)
+        property.add_agent(agent_id)
         return property
 
 class Propertyimage(db.Model):

@@ -14,7 +14,8 @@ def create_property():
     state = request.json.get('state')
     lga = request.json.get('lga')
     images = request.json.get('images')
-    property = Property.create(name, address, state, lga, images)
+    agent_id = request.json.get('agent_id')
+    property = Property.create(name, address, state, lga, images, agent_id)
     return PropertySchema().dump(property), 201
 
 @bp.get('/property/<int:id>')
@@ -34,9 +35,10 @@ def update_property(id):
     state = request.json.get('state')
     lga = request.json.get('lga')
     images = request.json.get('images')
+    agent_id = request.json.get('agent_id')
     if property is None:
         return {'message': 'Property not found'}, 404
-    property.update(name, address, state, lga, images)
+    property.update(name, address, state, lga, images, agent_id)
     return PropertySchema().dump(property), 200
 
 @bp.delete('/property/<int:id>')
