@@ -8,7 +8,7 @@ class Property(db.Model):
     state = db.Column(db.String(255), nullable=False)
     lga = db.Column(db.String(255), nullable=False)
     images = db.relationship('Propertyimage', backref='property', lazy=True)
-    units = db.relationship('Unit', backref='property', lazy=True)
+    units = db.relationship('Unit', primaryjoin='and_(Property.id==Unit.property_id, Unit.is_deleted==False)', backref='property', lazy=True)
     agent_id = db.Column(db.Integer, db.ForeignKey('agent.id'))
     agent = db.relationship('Agent', backref='property', lazy=True)
     is_listed = db.Column(db.Boolean, default=False)
