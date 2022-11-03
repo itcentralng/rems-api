@@ -36,9 +36,10 @@ def update_property(id):
     lga = request.json.get('lga')
     images = request.json.get('images')
     agent_id = request.json.get('agent_id')
+    is_listed = request.json.get('is_listed', False)
     if property is None:
         return {'message': 'Property not found'}, 404
-    property.update(name, address, state, lga, images, agent_id)
+    property.update(name, address, state, lga, images, agent_id, is_listed)
     return PropertySchema().dump(property), 200
 
 @bp.delete('/property/<int:id>')

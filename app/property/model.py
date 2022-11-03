@@ -11,6 +11,7 @@ class Property(db.Model):
     units = db.relationship('Unit', backref='property', lazy=True)
     agent_id = db.Column(db.Integer, db.ForeignKey('agent.id'))
     agent = db.relationship('Agent', backref='property', lazy=True)
+    is_listed = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now())
     is_deleted = db.Column(db.Boolean, default=False)
@@ -19,7 +20,7 @@ class Property(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, name=None, address=None, state=None, lga=None, images=[], agent_id=None):
+    def update(self, name=None, address=None, state=None, lga=None, images=[], agent_id=None, is_listed=None):
         self.name = name or self.name
         self.address = address or self.address
         self.state = state or self.state
@@ -28,6 +29,10 @@ class Property(db.Model):
             self.add_image(image)
         self.updated_at = db.func.now()
         self.add_agent(agent_id)
+        if is_listed:
+            self.add_to_listing()
+        if is_listed == False:
+            self.remove_from_listing()
         db.session.commit()
     
     def delete(self):
@@ -51,6 +56,14 @@ class Property(db.Model):
     
     def add_agent(self, agent_id):
         self.agent_id = agent_id
+        db.session.commit()
+    
+    def add_to_listing(self):
+        self.is_listed = True
+        db.session.commit()
+    
+    def remove_from_listing(self):
+        self.is_listed = False
         db.session.commit()
 
     @classmethod
