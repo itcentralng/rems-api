@@ -26,7 +26,7 @@ def get_agent(id):
         return {'message': 'Agent not found'}, 404
     return AgentSchema().dump(agent), 200
 
-@bp.patch('/agent/<int:id>')
+@bp.put('/agent/<int:id>')
 @auth_required("admin")
 def update_agent(id):
     agent = Agent.get_by_id(id)
