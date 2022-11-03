@@ -5,7 +5,7 @@ from app.tenant.model import Tenant
 tenancy_cycle = db.Table('tenancy_cycle',
     db.Column('unit_id', db.Integer, db.ForeignKey('unit.id'), primary_key=True),
     db.Column('tenant_id', db.Integer, db.ForeignKey('tenant.id'), primary_key=True),
-    db.Column('cycle', db.String)
+    db.Column('cycle', db.Integer)
 )
 class Unit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
