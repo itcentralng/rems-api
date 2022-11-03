@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('tenancy_cycle',
     sa.Column('unit_id', sa.Integer(), nullable=False),
     sa.Column('tenant_id', sa.Integer(), nullable=False),
-    sa.Column('cycle', sa.String(), nullable=True),
+    sa.Column('cycle', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['tenant_id'], ['tenant.id'], ),
     sa.ForeignKeyConstraint(['unit_id'], ['unit.id'], ),
     sa.PrimaryKeyConstraint('unit_id', 'tenant_id')
