@@ -72,11 +72,11 @@ class Property(db.Model):
     
     @classmethod
     def get_all(cls):
-        return cls.query.filter_by(is_deleted=False).all()
+        return cls.query.filter_by(is_deleted=False).order_by(cls.created_at.desc()).all()
     
     @classmethod
     def get_listing(cls):
-        return cls.query.filter_by(is_listed=True, is_deleted=False).all()
+        return cls.query.filter_by(is_listed=True, is_deleted=False).order_by(cls.created_at.desc()).all()
     
     @classmethod
     def create(cls, name, address, state, lga, images=[], agent_id=None):
