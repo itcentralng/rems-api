@@ -23,12 +23,13 @@ class Unit(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, name=None, annual_fee=None, status=None, property_id=None, tenant_id=None):
+    def update(self, name=None, annual_fee=None, status=None, property_id=None, tenant_id=None, date=None):
         self.name = name or self.name
         self.annual_fee = annual_fee or self.annual_fee
         self.status = status or self.status
         self.property_id = property_id or self.property_id
         self.tenant_id = tenant_id or self.tenant_id
+        self.add_tenancy_cycle(date)
         self.updated_at = db.func.now()
         db.session.commit()
     
@@ -38,14 +39,14 @@ class Unit(db.Model):
         db.session.commit()
     
     def add_tenancy_cycle(self, date):
-        # tm_yday from date string
-        cycle = datetime.strptime(date, '%Y-%m-%d').timetuple().tm_yday
-        existing_cycle = db.session.execute(tenancy_cycle.select().where(tenancy_cycle.c.unit_id == self.id).where(tenancy_cycle.c.tenant_id == self.tenant_id)).fetchone()
-        if existing_cycle:
-            db.session.execute(tenancy_cycle.update().where(tenancy_cycle.c.unit_id == self.id).where(tenancy_cycle.c.tenant_id == self.tenant_id).values(cycle=cycle))
-        else:
-            db.session.execute(tenancy_cycle.insert().values(unit_id=self.id, tenant_id=self.tenant_id, cycle=cycle))
-        db.session.commit()
+        if date:
+            cycle = datetime.strptime(date, '%Y-%m-%d').timetuple().tm_yday
+            existing_cycle = db.session.execute(tenancy_cycle.select().where(tenancy_cycle.c.unit_id == self.id).where(tenancy_cycle.c.tenant_id == self.tenant_id)).fetchone()
+            if existing_cycle:
+                db.session.execute(tenancy_cycle.update().where(tenancy_cycle.c.unit_id == self.id).where(tenancy_cycle.c.tenant_id == self.tenant_id).values(cycle=cycle))
+            else:
+                db.session.execute(tenancy_cycle.insert().values(unit_id=self.id, tenant_id=self.tenant_id, cycle=cycle))
+            db.session.commit()
 
     @classmethod
     def get_by_id(cls, id):
@@ -56,7 +57,8 @@ class Unit(db.Model):
         return cls.query.filter_by(is_deleted=False).all()
     
     @classmethod
-    def create(cls, name, annual_fee, status, property_id, tenant_id):
+    def create(cls, name, annual_fee, status, property_id, tenant_id, date):
         unit = cls(name=name, annual_fee=annual_fee, status=status, property_id=property_id, tenant_id=tenant_id)
         unit.save()
+        unit.add_tenancy_cycle(date)
         return unit

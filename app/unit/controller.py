@@ -14,7 +14,8 @@ def create_unit():
     status = request.json.get('status')
     property_id = request.json.get('property_id')
     tenant_id = request.json.get('tenant_id')
-    unit = Unit.create(name, annual_fee, status, property_id, tenant_id)
+    date = request.json.get('date')
+    unit = Unit.create(name, annual_fee, status, property_id, tenant_id, date)
     return UnitSchema().dump(unit), 201
 
 @bp.get('/unit/<int:id>')
@@ -34,9 +35,10 @@ def update_unit(id):
     status = request.json.get('status')
     property_id = request.json.get('property_id')
     tenant_id = request.json.get('tenant_id')
+    date = request.json.get('date')
     if unit is None:
         return {'message': 'Unit not found'}, 404
-    unit.update(name, annual_fee, status, property_id, tenant_id)
+    unit.update(name, annual_fee, status, property_id, tenant_id, date)
     return UnitSchema().dump(unit), 200
 
 @bp.delete('/unit/<int:id>')
