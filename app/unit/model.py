@@ -59,6 +59,10 @@ class Unit(db.Model):
         return cls.query.filter_by(is_deleted=False).all()
     
     @classmethod
+    def get_by_tenant_id(cls, tenant_id):
+        return cls.query.filter_by(tenant_id=tenant_id, is_deleted=False).all()
+    
+    @classmethod
     def create(cls, name, annual_fee, status, property_id, tenant_id, date):
         unit = cls(name=name, annual_fee=annual_fee, status=status, property_id=property_id, tenant_id=tenant_id)
         unit.save()

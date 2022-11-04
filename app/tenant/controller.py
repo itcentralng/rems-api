@@ -3,6 +3,10 @@ from app.route_guard import auth_required
 
 from app.tenant.model import *
 from app.tenant.schema import *
+from app.transaction.model import Transaction
+from app.transaction.schema import TransactionSchema
+from app.unit.model import Unit
+from app.unit.schema import UnitSchema
 
 bp = Blueprint('tenant', __name__)
 
@@ -20,7 +24,12 @@ def get_tenant(id):
     tenant = Tenant.get_by_id(id)
     if tenant is None:
         return {'message': 'Tenant not found'}, 404
-    return TenantSchema().dump(tenant), 200
+    units = Unit.get_by_tenant_id(id)
+    transactions = Transaction.get_by_tenant_id(id)
+    tenant_schema = TenantSchema().dump(tenant)
+    tenant_schema['units'] = UnitSchema(many=True).dump(units)
+    tenant_schema['transactions'] = TransactionSchema(many=True).dump(transactions)
+    return tenant_schema, 200
 
 @bp.put('/tenant/<int:id>')
 @auth_required()

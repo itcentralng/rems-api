@@ -1,12 +1,14 @@
 from datetime import datetime
 from app import db
-from app.unit.model import Unit, tenancy_cycle
+from app.unit.model import Unit
 from app.tenant.model import Tenant
 
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     tenant_id = db.Column(db.Integer, db.ForeignKey('tenant.id'), nullable=False)
     unit_id = db.Column(db.Integer, db.ForeignKey('unit.id'), nullable=False)
+    unit = db.relationship('Unit', backref=db.backref('transactions', lazy=True))
+    tenant = db.relationship('Tenant', backref=db.backref('transactions', lazy=True))
     amount = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now())
@@ -35,6 +37,10 @@ class Transaction(db.Model):
     @classmethod
     def get_all(cls):
         return cls.query.filter_by(is_deleted=False).all()
+    
+    @classmethod
+    def get_by_tenant_id(cls, tenant_id):
+        return cls.query.filter_by(tenant_id=tenant_id, is_deleted=False).all()
 
     @classmethod
     def get_total_tenancy_fee_not_paid(cls):
