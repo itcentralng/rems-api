@@ -12,7 +12,10 @@ def create_transaction():
     tenant_id = request.json.get('tenant_id')
     unit_id = request.json.get('unit_id')
     amount = request.json.get('amount')
+    next_payment_date = request.json.get('next_payment_date')
     transaction = Transaction.create(tenant_id, unit_id, amount)
+    unit = Unit.get_by_id(unit_id)
+    unit.add_tenancy_cycle(next_payment_date)
     return TransactionSchema().dump(transaction), 201
 
 @bp.get('/transaction/<int:id>')
