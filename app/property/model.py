@@ -38,6 +38,8 @@ class Property(db.Model):
     def delete(self):
         self.is_deleted = True
         self.updated_at = db.func.now()
+        for unit in self.units:
+            unit.delete()
         db.session.commit()
 
     def add_image(self, image):
