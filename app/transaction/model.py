@@ -38,22 +38,20 @@ class Transaction(db.Model):
 
     @classmethod
     def get_total_tenancy_fee_not_paid(cls):
-        day_of_the_year = datetime.now().timetuple().tm_yday
         current_year_paid_units = db.session.query(Transaction.unit_id).filter(Transaction.created_at >= datetime.now().replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)).all()
-        return db.session.query(db.func.sum(Unit.annual_fee)).join(tenancy_cycle, Unit.id == tenancy_cycle.c.unit_id).filter(tenancy_cycle.c.cycle <= day_of_the_year, Unit.id.notin_([unit.unit_id for unit in current_year_paid_units])).scalar()
+        return db.session.query(db.func.coalesce(db.func.sum(Unit.annual_fee), 0)).filter(Unit.is_deleted == False, Unit.next_payment_date <= datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)).filter(Unit.id.notin_([unit.unit_id for unit in current_year_paid_units])).scalar()
     
     @classmethod
     def get_total_tenancy_due(cls):
-        day_of_the_year = datetime.now().timetuple().tm_yday
-        return db.session.query(db.func.sum(Unit.annual_fee)).join(tenancy_cycle, Unit.id == tenancy_cycle.c.unit_id).filter(Unit.is_deleted == False, tenancy_cycle.c.cycle <= day_of_the_year).scalar()
+        return db.session.query(db.func.coalesce(db.func.sum(Unit.annual_fee), 0)).filter(Unit.is_deleted == False, Unit.next_payment_date <= datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)).scalar()
     
     @classmethod
     def get_total_tenancy_fee_paid_for_current_period(cls):
-        return db.session.query(db.func.sum(Transaction.amount)).filter(Transaction.created_at >= datetime.now().replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)).scalar()
+        return db.session.query(db.func.coalesce(db.func.sum(Transaction.amount), 0)).filter(Transaction.created_at >= datetime.now().replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)).scalar()
 
     @classmethod
     def get_total_tenancy_fee_paid(cls):
-        return db.session.query(db.func.sum(Transaction.amount)).scalar()
+        return db.session.query(db.func.coalesce(db.func.sum(Transaction.amount), 0)).scalar()
     
     @classmethod
     def create(cls, tenant_id, unit_id, amount):

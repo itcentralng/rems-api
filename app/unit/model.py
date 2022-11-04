@@ -15,6 +15,7 @@ class Unit(db.Model):
     property_id = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
     tenant_id = db.Column(db.Integer, db.ForeignKey('tenant.id'))
     tenant = db.relationship('Tenant', backref=db.backref('units', lazy=True))
+    next_payment_date = db.Column(db.Date)
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now())
     is_deleted = db.Column(db.Boolean, default=False)
@@ -40,6 +41,7 @@ class Unit(db.Model):
     
     def add_tenancy_cycle(self, date):
         if date:
+            self.next_payment_date = date
             cycle = datetime.strptime(date, '%Y-%m-%d').timetuple().tm_yday
             existing_cycle = db.session.execute(tenancy_cycle.select().where(tenancy_cycle.c.unit_id == self.id).where(tenancy_cycle.c.tenant_id == self.tenant_id)).fetchone()
             if existing_cycle:
