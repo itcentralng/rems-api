@@ -57,11 +57,11 @@ class Transaction(db.Model):
     
     @classmethod
     def get_total_tenancy_fee_paid_for_current_period(cls):
-        return db.session.query(db.func.coalesce(db.func.sum(Transaction.amount), 0)).filter(Transaction.created_at >= datetime.now().replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)).scalar()
+        return db.session.query(db.func.coalesce(db.func.sum(Transaction.amount), 0)).join(Unit).filter(Transaction.created_at >= datetime.now().replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0), Unit.is_deleted == False).scalar()
 
     @classmethod
     def get_total_tenancy_fee_paid(cls):
-        return db.session.query(db.func.coalesce(db.func.sum(Transaction.amount), 0)).scalar()
+        return db.session.query(db.func.coalesce(db.func.sum(Transaction.amount), 0)).join(Unit).filter(Unit.is_deleted == False).scalar()
     
     @classmethod
     def create(cls, tenant_id, unit_id, amount):
