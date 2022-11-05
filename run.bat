@@ -7,11 +7,8 @@
 
 @ECHO OFF
 @SETLOCAL
-@SET PATH=%PATH%;C:\Documents\REMS\rems-api
-
-@REM CALL PIP INSTALL && FLASK RUN COMMAND
-
-@CALL pip install -r requirements.txt
-@CALL ./run
-
+@SET PATH=%PATH%;C:\Users\LENOVO\Documents\REMS\rems-api-main\rems-api-main
+@SET DATABASE_URI=postgresql://postgres:adamu@localhost:5432/rems
+@SET FLASK_APP=main
+@CALL flask run 
 @ENDLOCAL
