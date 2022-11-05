@@ -10,5 +10,6 @@
 @SET PATH=%PATH%;C:\Users\LENOVO\Documents\REMS\rems-api-main\rems-api-main
 @SET DATABASE_URI=postgresql://postgres:adamu@localhost:5432/rems
 @SET FLASK_APP=main
+@CALL flask db upgrade
 @CALL flask run 
 @ENDLOCAL
