@@ -12,6 +12,8 @@ class Property(db.Model):
     agent_id = db.Column(db.Integer, db.ForeignKey('agent.id'))
     agent = db.relationship('Agent', backref='property', lazy=True)
     is_listed = db.Column(db.Boolean, default=False)
+    type = db.Column(db.String, default='house')
+    file_number = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now())
     is_deleted = db.Column(db.Boolean, default=False)
@@ -20,11 +22,13 @@ class Property(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def update(self, name=None, address=None, state=None, lga=None, images=[], agent_id=None, is_listed=None):
+    def update(self, name=None, address=None, state=None, lga=None, images=[], agent_id=None, is_listed=None, type=None, file_number=None):
         self.name = name or self.name
         self.address = address or self.address
         self.state = state or self.state
         self.lga = lga or self.lga
+        self.type = type or self.type
+        self.file_number = file_number or self.file_number
         for image in images:
             self.add_image(image)
         self.updated_at = db.func.now()
@@ -81,8 +85,8 @@ class Property(db.Model):
         return cls.query.filter_by(is_listed=True, is_deleted=False).order_by(cls.created_at.desc()).all()
     
     @classmethod
-    def create(cls, name, address, state, lga, images=[], agent_id=None):
-        property = cls(name=name, address=address, state=state, lga=lga)
+    def create(cls, name, address, state, lga, images=[], agent_id=None, is_listed=False, type='house', file_number=None):
+        property = cls(name=name, address=address, state=state, lga=lga, is_listed=is_listed, type=type, file_number=file_number)
         property.save()
         for image in images:
             property.add_image(image)
