@@ -66,3 +66,15 @@ def get_transaction_report():
         'paid': get_total_tenancy_fee_paid,
         'paidforcurrentperiod': get_total_tenancy_fee_paid_for_current_period
     }, 200
+
+@bp.get('/transaction/tenant/<int:id>')
+@auth_required()
+def get_transaction_by_tenant(id):
+    transactions = Transaction.get_by_tenant_id(id)
+    return TransactionSchema(many=True).dump(transactions), 200
+
+@bp.get('/transaction/unit/<int:id>')
+@auth_required()
+def get_transaction_by_unit(id):
+    transactions = Transaction.get_by_unit_id(id)
+    return TransactionSchema(many=True).dump(transactions), 200
