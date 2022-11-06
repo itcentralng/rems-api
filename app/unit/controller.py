@@ -1,6 +1,9 @@
 from flask import Blueprint, request
 from app.route_guard import auth_required
 
+from app.transaction.model import Transaction
+from app.transaction.schema import TransactionSchema
+
 from app.unit.model import *
 from app.unit.schema import *
 
@@ -24,7 +27,10 @@ def get_unit(id):
     unit = Unit.get_by_id(id)
     if unit is None:
         return {'message': 'Unit not found'}, 404
-    return UnitSchema().dump(unit), 200
+    recent_payment = Transaction.get_recent_by_unit_id_and_tenant_id(unit.id, unit.tenant_id)
+    unitschema = UnitSchema().dump(unit)
+    unitschema['recent_payment'] = TransactionSchema().dump(recent_payment)
+    return unitschema, 200
 
 @bp.put('/unit/<int:id>')
 @auth_required()

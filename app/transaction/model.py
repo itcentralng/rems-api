@@ -45,6 +45,10 @@ class Transaction(db.Model):
     @classmethod
     def get_by_unit_id(cls, unit_id):
         return cls.query.filter_by(unit_id=unit_id, is_deleted=False).all()
+    
+    @classmethod
+    def get_recent_by_unit_id_and_tenant_id(cls, unit_id, tenant_id):
+        return cls.query.filter_by(unit_id=unit_id, tenant_id=tenant_id, is_deleted=False).order_by(Transaction.created_at.desc()).first()
 
     @classmethod
     def get_total_tenancy_fee_not_paid(cls):
