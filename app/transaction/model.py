@@ -70,6 +70,7 @@ class Transaction(db.Model):
     
     @classmethod
     def create(cls, tenant_id, unit_id, amount):
+        amount = float(amount)
         type = 'full'
         unit = Unit.get_by_id(unit_id)
         recent_payment = Transaction.get_recent_by_unit_id_and_tenant_id(unit_id, tenant_id)
