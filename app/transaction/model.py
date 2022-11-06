@@ -10,6 +10,7 @@ class Transaction(db.Model):
     unit = db.relationship('Unit', backref=db.backref('transactions', lazy=True))
     tenant = db.relationship('Tenant', backref=db.backref('transactions', lazy=True))
     amount = db.Column(db.Float, nullable=False)
+    type = db.Column(db.String(50), default='full')
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now())
     is_deleted = db.Column(db.Boolean, default=False)
@@ -69,6 +70,27 @@ class Transaction(db.Model):
     
     @classmethod
     def create(cls, tenant_id, unit_id, amount):
-        transaction = cls(tenant_id=tenant_id, unit_id=unit_id, amount=amount)
+        type = 'full'
+        unit = Unit.get_by_id(unit_id)
+        recent_payment = Transaction.get_recent_by_unit_id_and_tenant_id(unit_id, tenant_id)
+        if recent_payment:
+            if recent_payment.type == 'half':
+                type = 'full'
+                if unit.annual_fee/2 != amount:
+                    return
+            elif recent_payment.type == 'full':
+                if unit.annual_fee/2 == amount:
+                    type = 'half'
+                elif unit.annual_fee == amount:
+                    type = 'full'
+                else:
+                    return
+        elif unit.annual_fee/2 == amount:
+            type = 'half'
+        elif unit.annual_fee == amount:
+            type = 'full'
+        else:
+            return
+        transaction = cls(tenant_id=tenant_id, unit_id=unit_id, amount=amount, type=type)
         transaction.save()
         return transaction
