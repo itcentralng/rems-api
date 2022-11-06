@@ -37,7 +37,7 @@ class Transaction(db.Model):
     
     @classmethod
     def get_all(cls):
-        return cls.query.filter_by(is_deleted=False).all()
+        return cls.query.join(Unit).filter(Unit.is_deleted==False).filter(cls.is_deleted==False).all()
     
     @classmethod
     def get_by_tenant_id(cls, tenant_id):
